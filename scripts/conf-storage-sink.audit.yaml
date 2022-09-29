@@ -1,0 +1,21 @@
+tenant: iot-system
+namespace: audit
+name: cloud-storage-sink
+inputs:
+  - persistent://iot-system/audit/commands
+type:
+parallelism: 1
+configs:
+  provider: google-cloud-storage
+  gcsServiceAccountKeyFileContent: |
+    {
+      "type": "service_account",
+      ...
+    }
+  bucket: thorsig-pulsar-demo-1-dev
+  formatType: json
+  partitionerType: time
+  skipFailedMessages: true
+  batchTimeMs: 10000
+  batchSize: 1000
+  timePartitionDuration: 24h
