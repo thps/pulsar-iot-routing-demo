@@ -140,3 +140,19 @@ IoT device and the developer's backend test/dev environment. In this POC demo, w
 ```
 The key piece of information here, is that the context has a `.getProperties();` method which can be used to pull out the 
 environment property we
+
+# Conclusion
+
+This solution is designed around the ability to route messages in Pulsar, baesd on message properties and using Pulsar's multi-tenant
+and namespaces.
+
+This POC shows the feasibility of routing messages from different IoT Devices (producers) to different namespaces or tenants in Pulsar, thus
+allowing for separation of dev/test/stage/prod workloads in common production cluster environment. 
+
+We also show how to configure sinks to Cloud Storage (Data Lake) and how data can be separated for dev/test and prod environments.
+
+Key pieces to make this work in production are access controls and input validation on the ingestion layer and on controls for allowing
+development in dev/test namespaces or tenants. 
+
+Pulsar enables powerful capabilities in the messaging layer, including message routing, replication and connectivity to data systems. 
+
