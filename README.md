@@ -93,9 +93,50 @@ Thor Sigurjonsson  - Solutions Architect
 
 
 ## Demo
-Setup Scripts
 
-Producers and Consumers
+### Setup Scripts
 
-Pulsar Function
+Setup scripts are in the `scripts/` folder
 
+### Producers and Consumers
+We have created a version 1 consumer and producer. These are only implementing the `NOOP` command presently (to simulate)
+code in production. 
+
+We have then implemented a version 2 consumer and producer. These have begun implementation of `PING` command for the IoT
+system, and represent what developers would be doing in the field and developing in the cloud against their device in a 
+dev/test environment.
+
+These are only useful for purposes of the demo, and for gleaning basics about how consumers/producers and messaging
+works in Pulsar.
+
+###  Pulsar Function
+
+For our POC purposes, the properties router function looks at an `env` property and publishes the message to a hardcoded 
+environment topic. In the real-world, we would be looking for which dev/test environment to route to, based on the originating 
+IoT device and the developer's backend test/dev environment. In this POC demo, we just have one dev environment.
+
+```
+    public DeviceMessaage process(DeviceMessaage input, Context context) {
+        //String value = client.get(key);
+        Map<String, String> props = context.getCurrentRecord().getProperties();
+        Set<String> keys = props.keySet();
+        if (keys.contains("env") ){
+            String envStr = props.get("env");
+            context.getLogger().info("  Message has env property: " + new String(props.get("env")));
+            //context.publish(context.getOutputTopic() + "-" + envStr, input);
+            String prodTopic = "persistent://iot-system/prod/commands";
+            String devTopic  = "persistent://iot-system/dev/commands";
+            if (envStr.equals("prod")) {
+                context.publish(prodTopic, input);
+            } else {
+                context.publish(devTopic, input);
+            }
+        } else {
+            context.getLogger().info("  Message does not have env property.");
+        }
+        return input;
+    }
+
+```
+The key piece of information here, is that the context has a `.getProperties();` method which can be used to pull out the 
+environment property we
